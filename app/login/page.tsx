@@ -37,7 +37,7 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
             <div className="w-full max-w-md p-6 sm:p-8 bg-gray-800 rounded-xl shadow-2xl border border-gray-700">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 mb-2">
+                    <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-teal-400 mb-2">
                         {isLogin ? 'Welcome Back' : 'Create Account'}
                     </h2>
                     <p className="text-gray-400 text-sm">
@@ -105,7 +105,7 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold shadow-lg shadow-blue-500/20 transform hover:-translate-y-0.5 transition-all duration-200"
+                        className="w-full py-3 bg-linear-to-r from-blue-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold shadow-lg shadow-blue-500/20 transform hover:-translate-y-0.5 transition-all duration-200"
                     >
                         {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
                     </button>

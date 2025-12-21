@@ -34,7 +34,7 @@ export function OverrunMatrix({ measurements, gearRatio }: Props) {
 
     return (
         <div className="overflow-x-auto bg-gray-900 rounded-xl border border-gray-800 shadow-2xl p-6 print:shadow-none print:border-none print:p-0">
-            <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
+            <h3 className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-purple-400 to-pink-400 mb-6">
                 Overrun Matrix
             </h3>
 

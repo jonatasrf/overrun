@@ -6,6 +6,17 @@
 
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
 /* Force single page behavior where possible */
 .break-inside-avoid {
   break-inside: avoid;

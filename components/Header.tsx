@@ -12,7 +12,7 @@ export async function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-4 sm:py-0 gap-4 sm:gap-0">
                     <div className="flex items-center w-full sm:w-auto justify-between sm:justify-start">
-                        <Link href="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+                        <Link href="/" className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-teal-400">
                             OVERRUN
                         </Link>
                         {/* Mobile Spacer if needed */}
