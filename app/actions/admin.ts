@@ -11,10 +11,10 @@ export async function createTractor(formData: FormData) {
 
     if (!name || isNaN(gearRatio)) return { error: 'Invalid input' }
 
-    let imageBytes: Uint8Array | null = null
+    let imageBytes: any = null
     if (imageFile && imageFile.size > 0) {
         const arrayBuffer = await imageFile.arrayBuffer()
-        imageBytes = new Uint8Array(arrayBuffer)
+        imageBytes = Buffer.from(arrayBuffer)
     }
 
     // Check for duplicates
