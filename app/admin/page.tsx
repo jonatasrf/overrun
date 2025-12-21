@@ -1,6 +1,6 @@
 import { Header } from '@/components/Header'
 import { prisma } from '@/lib/prisma'
-import { createTractor, deleteTractor, createTire, deleteTire, createUser } from '@/app/actions/admin'
+import { deleteTractor, createTire, deleteTire } from '@/app/actions/admin'
 import { Plus, Trash2, Tractor, Settings2, Disc, User } from 'lucide-react'
 import { TractorImageForm } from '@/components/TractorImageForm'
 import { CreateUserForm } from '@/components/CreateUserForm'
