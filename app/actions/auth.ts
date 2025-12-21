@@ -7,30 +7,39 @@ import * as bcrypt from 'bcryptjs'
 import { redirect } from 'next/navigation'
 
 export async function login(formData: FormData) {
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
+    try {
+        const email = formData.get('email') as string
+        const password = formData.get('password') as string
 
-    if (!email || !password) {
-        return { error: 'Missing fields' }
+        if (!email || !password) {
+            return { error: 'Missing fields' }
+        }
+
+        const user = await prisma.user.findFirst({
+            where: { email },
+        })
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return { error: 'Invalid credentials' }
+        }
+
+        const token = await signToken({ userId: user.id, role: user.role })
+
+        const cookieStore = await cookies()
+        cookieStore.set('session', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 24, // 1 day
+            path: '/',
+        })
+    } catch (error) {
+        console.error('Login error:', error)
+        // If it's a redirect error, re-throw it so Next.js handles it
+        if ((error as Error).message === 'NEXT_REDIRECT') {
+            throw error
+        }
+        return { error: 'Something went wrong. Please try again.' }
     }
-
-    const user = await prisma.user.findFirst({
-        where: { email },
-    })
-
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        return { error: 'Invalid credentials' }
-    }
-
-    const token = await signToken({ userId: user.id, role: user.role })
-
-    const cookieStore = await cookies()
-    cookieStore.set('session', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24, // 1 day
-        path: '/',
-    })
 
     redirect('/')
 }
