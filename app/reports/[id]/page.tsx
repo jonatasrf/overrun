@@ -40,19 +40,31 @@ export default async function ReportPage(props: Props) {
     }
 
     const tractors = await prisma.tractorModel.findMany({
-        orderBy: { name: 'asc' }
+        orderBy: { name: 'asc' },
+        select: {
+            id: true,
+            name: true,
+            gearRatio: true
+        }
     })
 
     const tires = await prisma.tire.findMany({
-        orderBy: { name: 'asc' }
+        orderBy: { name: 'asc' },
+        select: {
+            id: true,
+            name: true
+        }
     })
 
     const reportWithImage = {
         ...report,
         gearRatioValue: syncedGearRatio, // Use synced/overridden value
         tractorImage: syncedImage ? `data:image/jpeg;base64,${Buffer.from(syncedImage).toString('base64')}` : null,
-        // We must also ensure the component receives the synced gear ratio as the 'initial' value
     }
+
+    // safe serialize to handle Dates
+    const serializedReport = JSON.parse(JSON.stringify(reportWithImage))
+    const serializedCurrentUser = JSON.parse(JSON.stringify(session))
 
     return (
         <div className="min-h-screen bg-gray-950 text-gray-100">
@@ -61,10 +73,10 @@ export default async function ReportPage(props: Props) {
             </div>
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <ReportDetailClient
-                    report={reportWithImage}
+                    report={serializedReport}
                     tractors={tractors}
                     tires={tires}
-                    currentUser={session}
+                    currentUser={serializedCurrentUser}
                 />
             </main>
         </div>
