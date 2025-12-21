@@ -1,5 +1,6 @@
 
 import { clsx } from 'clsx'
+import { useState } from 'react'
 
 type Measurement = {
     type: string
@@ -27,6 +28,8 @@ function getStatusLabel(percent: number) {
 }
 
 export function OverrunMatrix({ measurements, gearRatio }: Props) {
+    const [activeCell, setActiveCell] = useState<{ front: number; rear: number } | null>(null)
+
     // Helper to get average for a specific tyre/pressure
     const getAvg = (type: 'FRONT' | 'REAR', pressure: number) => {
         return measurements.find(m => m.type === type && m.pressure === pressure)?.average || 0
@@ -54,15 +57,30 @@ export function OverrunMatrix({ measurements, gearRatio }: Props) {
                         <tr>
                             <th className="p-2 w-16 print:border-none print:w-8 print:p-0"></th>
                             {[...PRESSURES].reverse().map(p => (
-                                <th key={p} className="p-2 text-teal-400 font-mono text-lg print:text-[10px] print:p-0 print:h-10 print:align-middle text-center">{p}</th>
+                                <th
+                                    key={p}
+                                    className={clsx(
+                                        "p-2 text-teal-400 font-mono text-lg print:text-[10px] print:p-0 print:h-10 print:align-middle text-center transition-colors duration-200",
+                                        activeCell?.rear === p ? "text-white bg-teal-500/10 rounded-t-lg" : "opacity-60"
+                                    )}
+                                >
+                                    {p}
+                                </th>
                             ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {PRESSURES.map(frontPsi => (
+                        {PRESSURES.map((frontPsi, rowIndex) => (
                             <tr key={frontPsi}>
-                                <th className="p-2 text-blue-400 font-mono text-lg print:text-[10px] print:p-0 print:border-none print:w-8 print:h-10 print:align-middle text-center">{frontPsi}</th>
-                                {[...PRESSURES].reverse().map(rearPsi => {
+                                <th
+                                    className={clsx(
+                                        "p-2 text-blue-400 font-mono text-lg print:text-[10px] print:p-0 print:border-none print:w-8 print:h-10 print:align-middle text-center transition-colors duration-200",
+                                        activeCell?.front === frontPsi ? "text-white bg-blue-500/10 rounded-l-lg" : "opacity-60"
+                                    )}
+                                >
+                                    {frontPsi}
+                                </th>
+                                {[...PRESSURES].reverse().map((rearPsi, colIndex) => {
                                     const frontAvg = getAvg('FRONT', frontPsi)
                                     const rearAvg = getAvg('REAR', rearPsi)
 
@@ -75,16 +93,43 @@ export function OverrunMatrix({ measurements, gearRatio }: Props) {
                                     const percentVal = percent * 100
                                     const colorClass = getStatusColor(percentVal)
 
+                                    const isSelected = activeCell?.front === frontPsi && activeCell?.rear === rearPsi
+                                    const activeRowIndex = activeCell ? PRESSURES.indexOf(activeCell.front) : -1
+                                    const activeColIndex = activeCell ? [...PRESSURES].reverse().indexOf(activeCell.rear) : -1
+
+                                    const isRowHighlight = activeCell && rowIndex === activeRowIndex && colIndex <= activeColIndex
+                                    const isColHighlight = activeCell && colIndex === activeColIndex && rowIndex <= activeRowIndex
+                                    const isHighlighted = isRowHighlight || isColHighlight
+
                                     return (
                                         <td key={rearPsi} className="p-1 print:p-px">
-                                            <div className={clsx(
-                                                "h-16 flex flex-col items-center justify-center rounded-lg border transition-transform hover:scale-105 cursor-default print:h-10 print:w-full print:border print:rounded-md",
-                                                colorClass
-                                            )}>
-                                                <span className="text-lg font-bold print:text-[11px] print:leading-none">
+                                            <div
+                                                onClick={() => {
+                                                    if (isSelected) {
+                                                        setActiveCell(null)
+                                                    } else {
+                                                        setActiveCell({ front: frontPsi, rear: rearPsi })
+                                                    }
+                                                }}
+                                                className={clsx(
+                                                    "h-16 flex flex-col items-center justify-center rounded-lg border transition-all duration-200 cursor-pointer overflow-hidden relative print:h-10 print:w-full print:border print:rounded-md",
+                                                    colorClass,
+                                                    isSelected
+                                                        ? "scale-105 z-10 border-white ring-2 ring-white/50 shadow-lg shadow-white/10"
+                                                        : isHighlighted
+                                                            ? "opacity-100 border-white/30 brightness-110"
+                                                            : activeCell ? "opacity-30 grayscale-[0.2]" : "hover:border-white/50"
+                                                )}
+                                            >
+                                                {/* Highlight overlay for row/column */}
+                                                {isHighlighted && (
+                                                    <div className="absolute inset-0 bg-white/5 pointer-events-none" />
+                                                )}
+
+                                                <span className="text-lg font-bold print:text-[11px] print:leading-none z-10">
                                                     {percentVal.toFixed(2)}%
                                                 </span>
-                                                <span className="text-[10px] opacity-70 font-semibold print:text-[7px] print:leading-none">
+                                                <span className="text-[10px] opacity-70 font-semibold print:text-[7px] print:leading-none z-10">
                                                     {getStatusLabel(percentVal)}
                                                 </span>
                                             </div>

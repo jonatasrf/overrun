@@ -5,7 +5,8 @@ import { OverrunMatrix } from '@/components/OverrunMatrix'
 import { ReportActions } from '@/components/ReportActions'
 import { updateReport } from '@/app/actions/reports'
 import { useRouter } from 'next/navigation'
-import { FileText, Calendar, User, Tractor, Settings, Scale, Edit2, Save, X, Disc } from 'lucide-react'
+import { FileText, Calendar, User, Tractor, Settings, Scale, Edit2, Save, X, Disc, History } from 'lucide-react'
+import Link from 'next/link'
 
 const PRESSURES = [24, 22, 20, 18, 16, 14]
 
@@ -119,7 +120,7 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
     return (
         <div className="space-y-8 print:space-y-4">
             {/* Header / Actions */}
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:p-0 print:border-none print:mb-2">
+            <div className="bg-gray-900 rounded-xl p-4 sm:p-6 border border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:p-0 print:border-none print:mb-2">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <h1 className="text-3xl font-bold text-white">
@@ -212,7 +213,16 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                                             ))}
                                         </select>
                                     ) : (
-                                        <div className="text-xl font-bold text-white">{report.tractorName}</div>
+                                        <div className="text-xl font-bold text-white flex items-center gap-2 mt-1">
+                                            {report.tractorName}
+                                            <Link
+                                                href={`/tractors/${encodeURIComponent(report.tractorName)}`}
+                                                className="p-1 text-gray-500 hover:text-purple-400 hover:bg-purple-900/20 rounded transition-all"
+                                                title="View Model History"
+                                            >
+                                                <History className="h-4 w-4" />
+                                            </Link>
+                                        </div>
                                     )}
                                 </div>
                                 <div>
@@ -249,69 +259,92 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                             <div className="flex items-center gap-2 text-gray-400 text-sm font-medium mb-2">
                                 <Scale className="h-4 w-4" /> Weights
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs text-gray-500 block mb-1">Total Weight</label>
-                                    {isEditing ? (
-                                        <div className="w-full bg-gray-800/50 border border-gray-700 rounded text-white px-2 py-1 text-sm font-bold text-center">
-                                            {(Number(formData.frontLoad) + Number(formData.rearLoad)) || 0} kg
-                                        </div>
-                                    ) : <div className="text-white text-sm font-bold">{report.totalWeight ? `${report.totalWeight} kg` : '-'}</div>}
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-500 block mb-1">F. Ballast</label>
+                                    <label className="flex justify-between text-xs text-gray-500 mb-1">
+                                        F/A Load
+                                        {isEditing && formData.frontLoad && formData.rearLoad && (
+                                            <span className="text-blue-400 font-bold">
+                                                {Math.round((Number(formData.frontLoad) / (Number(formData.frontLoad) + Number(formData.rearLoad))) * 100)}%
+                                            </span>
+                                        )}
+                                        {!isEditing && report.frontLoad && report.totalWeight && (
+                                            <span className="text-blue-400 font-bold">
+                                                {Math.round((Number(report.frontLoad) / Number(report.totalWeight)) * 100)}%
+                                            </span>
+                                        )}
+                                    </label>
                                     {isEditing ? (
                                         <input
                                             type="number"
-                                            className="w-full bg-gray-800 border-gray-700 rounded text-white px-2 py-1 text-sm"
+                                            className="w-full bg-gray-800 border-gray-700 rounded text-white px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                                            value={formData.frontLoad}
+                                            onChange={e => setFormData({ ...formData, frontLoad: e.target.value })}
+                                        />
+                                    ) : <div className="text-white text-sm font-bold">{report.frontLoad || '-'} kg</div>}
+                                </div>
+                                <div>
+                                    <label className="flex justify-between text-xs text-gray-500 mb-1">
+                                        R/A Load
+                                        {isEditing && formData.frontLoad && formData.rearLoad && (
+                                            <span className="text-teal-400 font-bold">
+                                                {Math.round((Number(formData.rearLoad) / (Number(formData.frontLoad) + Number(formData.rearLoad))) * 100)}%
+                                            </span>
+                                        )}
+                                        {!isEditing && report.rearLoad && report.totalWeight && (
+                                            <span className="text-teal-400 font-bold">
+                                                {Math.round((Number(report.rearLoad) / Number(report.totalWeight)) * 100)}%
+                                            </span>
+                                        )}
+                                    </label>
+                                    {isEditing ? (
+                                        <input
+                                            type="number"
+                                            className="w-full bg-gray-800 border-gray-700 rounded text-white px-2 py-1 text-sm focus:ring-1 focus:ring-teal-500 outline-none"
+                                            value={formData.rearLoad}
+                                            onChange={e => setFormData({ ...formData, rearLoad: e.target.value })}
+                                        />
+                                    ) : <div className="text-white text-sm font-bold">{report.rearLoad || '-'} kg</div>}
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <label className="text-[10px] text-gray-500 block mb-1 uppercase font-bold tracking-wider">Total Weight (Calculated)</label>
+                                    <div className="w-full bg-gray-800/30 border border-dashed border-gray-700 rounded-lg p-2 text-xl font-mono font-black text-white flex items-baseline gap-1">
+                                        {isEditing ? (
+                                            <>
+                                                {(Number(formData.frontLoad) + Number(formData.rearLoad)) || 0}
+                                                <span className="text-xs text-gray-500 font-normal">kg</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {report.totalWeight || '-'}
+                                                <span className="text-xs text-gray-500 font-normal">kg</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs text-gray-500 block mb-1">Front Ballast</label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            className="w-full bg-gray-800 border border-gray-700 rounded text-white px-2 py-1 text-sm"
                                             value={formData.frontBallast}
                                             onChange={e => setFormData({ ...formData, frontBallast: e.target.value })}
                                         />
                                     ) : <div className="text-white text-sm">{report.frontBallast || '-'}</div>}
                                 </div>
                                 <div>
-                                    <label className="text-xs text-gray-500 block mb-1">
-                                        F/A Load
-                                        {formData.frontLoad && formData.rearLoad && (
-                                            <span className="text-blue-400 ml-1">
-                                                ({Math.round((Number(formData.frontLoad) / (Number(formData.frontLoad) + Number(formData.rearLoad))) * 100)}%)
-                                            </span>
-                                        )}
-                                    </label>
+                                    <label className="text-xs text-gray-500 block mb-1">Rear Ballast</label>
                                     {isEditing ? (
                                         <input
-                                            type="number"
-                                            className="w-full bg-gray-800 border-gray-700 rounded text-white px-2 py-1 text-sm"
-                                            value={formData.frontLoad}
-                                            onChange={e => {
-                                                const front = e.target.value
-                                                const total = Number(front) + Number(formData.rearLoad)
-                                                setFormData({ ...formData, frontLoad: front, totalWeight: total.toString() })
-                                            }}
+                                            type="text"
+                                            className="w-full bg-gray-800 border border-gray-700 rounded text-white px-2 py-1 text-sm"
+                                            value={formData.rearBallast}
+                                            onChange={e => setFormData({ ...formData, rearBallast: e.target.value })}
                                         />
-                                    ) : <div className="text-white text-sm">{report.frontLoad ? `${report.frontLoad} kg (${Math.round((Number(report.frontLoad) / Number(report.totalWeight)) * 100)}%)` : '-'}</div>}
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-500 block mb-1">
-                                        R/A Load
-                                        {formData.frontLoad && formData.rearLoad && (
-                                            <span className="text-teal-400 ml-1">
-                                                ({Math.round((Number(formData.rearLoad) / (Number(formData.frontLoad) + Number(formData.rearLoad))) * 100)}%)
-                                            </span>
-                                        )}
-                                    </label>
-                                    {isEditing ? (
-                                        <input
-                                            type="number"
-                                            className="w-full bg-gray-800 border-gray-700 rounded text-white px-2 py-1 text-sm"
-                                            value={formData.rearLoad}
-                                            onChange={e => {
-                                                const rear = e.target.value
-                                                const total = Number(formData.frontLoad) + Number(rear)
-                                                setFormData({ ...formData, rearLoad: rear, totalWeight: total.toString() })
-                                            }}
-                                        />
-                                    ) : <div className="text-white text-sm">{report.rearLoad ? `${report.rearLoad} kg (${Math.round((Number(report.rearLoad) / Number(report.totalWeight)) * 100)}%)` : '-'}</div>}
+                                    ) : <div className="text-white text-sm">{report.rearBallast || '-'}</div>}
                                 </div>
                             </div>
                         </div>
@@ -409,7 +442,7 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
             {/* Details & Edit Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 print-grid-2 print:mt-1 print:text-[10px]">
                 {/* Front */}
-                <div className={`bg-gray-900 border border-gray-800 rounded-xl p-6 ${isEditing ? 'ring-2 ring-blue-500/20' : ''} print:border-none print:p-0 print:bg-white`}>
+                <div className={`bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-6 ${isEditing ? 'ring-2 ring-blue-500/20' : ''} print:border-none print:p-0 print:bg-white`}>
                     <h3 className="text-lg font-bold text-blue-400 mb-2 print:text-sm print:mb-2 print:text-black print:border-b-2 print:border-black print:pb-1">Front Measurements</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left text-gray-400 print:text-[10px] print:border print:border-gray-300">
@@ -428,14 +461,16 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                                             <td className="px-4 py-2 font-mono text-blue-300 print:text-black print:px-2 print:py-1 print:font-bold print:bg-gray-50">{pressure}</td>
                                             <td className="px-4 py-2 print:px-2 print:py-1 print:border-l print:border-r print:border-gray-200">
                                                 {isEditing ? (
-                                                    <div className="flex gap-2">
-                                                        {['val1', 'val2', 'val3'].map(field => (
-                                                            <input
-                                                                key={field}
-                                                                className="w-16 bg-gray-800 border border-gray-700 rounded px-1 text-white text-center"
-                                                                value={measurements[`FRONT_${pressure}`][field as any]}
-                                                                onChange={e => handleMeasurementChange('FRONT', pressure, field as any, e.target.value)}
-                                                            />
+                                                    <div className="flex flex-col sm:flex-row gap-2">
+                                                        {['val1', 'val2', 'val3'].map((field, idx) => (
+                                                            <div key={field} className="flex items-center gap-2">
+                                                                <span className="sm:hidden text-[10px] text-gray-500 w-8">T{idx + 1}</span>
+                                                                <input
+                                                                    className="w-full sm:w-16 bg-gray-800 border border-gray-700 rounded px-1 text-white text-center"
+                                                                    value={measurements[`FRONT_${pressure}`][field as any]}
+                                                                    onChange={e => handleMeasurementChange('FRONT', pressure, field as any, e.target.value)}
+                                                                />
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 ) : (
@@ -454,7 +489,7 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                 </div>
 
                 {/* Rear */}
-                <div className={`bg-gray-900 border border-gray-800 rounded-xl p-6 ${isEditing ? 'ring-2 ring-teal-500/20' : ''} print:border-none print:p-0 print:bg-white`}>
+                <div className={`bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-6 ${isEditing ? 'ring-2 ring-teal-500/20' : ''} print:border-none print:p-0 print:bg-white`}>
                     <h3 className="text-lg font-bold text-teal-400 mb-2 print:text-sm print:mb-2 print:text-black print:border-b-2 print:border-black print:pb-1">Rear Measurements</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left text-gray-400 print:text-[10px] print:border print:border-gray-300">
@@ -473,14 +508,16 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                                             <td className="px-4 py-2 font-mono text-teal-300 print:text-black print:px-2 print:py-1 print:font-bold print:bg-gray-50">{pressure}</td>
                                             <td className="px-4 py-2 print:px-2 print:py-1 print:border-l print:border-r print:border-gray-200">
                                                 {isEditing ? (
-                                                    <div className="flex gap-2">
-                                                        {['val1', 'val2', 'val3'].map(field => (
-                                                            <input
-                                                                key={field}
-                                                                className="w-16 bg-gray-800 border border-gray-700 rounded px-1 text-white text-center"
-                                                                value={measurements[`REAR_${pressure}`][field as any]}
-                                                                onChange={e => handleMeasurementChange('REAR', pressure, field as any, e.target.value)}
-                                                            />
+                                                    <div className="flex flex-col sm:flex-row gap-2">
+                                                        {['val1', 'val2', 'val3'].map((field, idx) => (
+                                                            <div key={field} className="flex items-center gap-2">
+                                                                <span className="sm:hidden text-[10px] text-gray-500 w-8">T{idx + 1}</span>
+                                                                <input
+                                                                    className="w-full sm:w-16 bg-gray-800 border border-gray-700 rounded px-1 text-white text-center"
+                                                                    value={measurements[`REAR_${pressure}`][field as any]}
+                                                                    onChange={e => handleMeasurementChange('REAR', pressure, field as any, e.target.value)}
+                                                                />
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 ) : (

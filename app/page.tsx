@@ -1,11 +1,25 @@
-
 import { Header } from '@/components/Header'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { FileText, Calendar, User as UserIcon } from 'lucide-react'
+import { FileText } from 'lucide-react'
+import { DashboardSearch } from '@/components/DashboardSearch'
+import { DashboardReportCard } from '@/components/DashboardReportCard'
+import { Suspense } from 'react'
 
-export default async function Dashboard() {
+export default async function Dashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
+  const query = (await searchParams).q
+
   const reports = await prisma.report.findMany({
+    where: query ? {
+      OR: [
+        { tractorName: { contains: query, mode: 'insensitive' } },
+        { user: { username: { contains: query, mode: 'insensitive' } } },
+      ],
+    } : {},
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,
@@ -24,10 +38,13 @@ export default async function Dashboard() {
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-400">
+        <div className="flex flex-col items-center mb-10 space-y-6">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-gray-100 via-gray-300 to-gray-500">
             Recent Tests
           </h1>
+          <Suspense>
+            <DashboardSearch />
+          </Suspense>
         </div>
 
         {reports.length === 0 ? (
@@ -47,38 +64,7 @@ export default async function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {reports.map((report) => (
-              <Link
-                key={report.id}
-                href={`/reports/${report.id}`}
-                className="group block p-6 bg-gray-900 rounded-xl border border-gray-800 hover:border-gray-700 hover:bg-gray-800/50 transition-all duration-200"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${report.status === 'CLOSED'
-                    ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                    : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                    }`}>
-                    {report.status}
-                  </span>
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(report.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-
-                <h4 className="text-lg font-medium text-gray-200 group-hover:text-blue-400 transition-colors mb-2">
-                  {report.tractorName}
-                </h4>
-
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span className="flex items-center gap-2">
-                    Ratio: {report.gearRatioValue}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <UserIcon className="h-3 w-3" />
-                    {report.user.username}
-                  </span>
-                </div>
-              </Link>
+              <DashboardReportCard key={report.id} report={report} />
             ))}
           </div>
         )}

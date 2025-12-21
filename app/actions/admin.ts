@@ -19,7 +19,7 @@ export async function createTractor(formData: FormData) {
 
     // Check for duplicates
     const existing = await prisma.tractorModel.findFirst({
-        where: { name }
+        where: { name: { equals: name, mode: 'insensitive' } }
     })
 
     if (existing) {
@@ -42,7 +42,7 @@ export async function createTractor(formData: FormData) {
     }
 }
 
-export async function deleteTractor(id: string) {
+export async function deleteTractor(id: string, formData: FormData) {
     try {
         await prisma.tractorModel.delete({ where: { id } })
         revalidatePath('/admin')
@@ -115,6 +115,15 @@ export async function createTire(formData: FormData) {
         return { error: 'Name is required' }
     }
 
+    // Check for duplicates
+    const existing = await prisma.tire.findFirst({
+        where: { name: { equals: name, mode: 'insensitive' } }
+    })
+
+    if (existing) {
+        return { error: 'A tire with this name already exists' }
+    }
+
     try {
         await prisma.tire.create({
             data: {
@@ -132,7 +141,7 @@ export async function createTire(formData: FormData) {
     }
 }
 
-export async function deleteTire(id: string) {
+export async function deleteTire(id: string, formData: FormData) {
     const session = await getSession()
     if (!session || session.role !== 'ADMIN') {
         return { error: 'Unauthorized' }

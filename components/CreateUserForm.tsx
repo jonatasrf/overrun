@@ -4,6 +4,7 @@ import { createUser } from '@/app/actions/admin'
 import { Plus } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 function SubmitButton() {
     const { pending } = useFormStatus()
@@ -26,7 +27,9 @@ export function CreateUserForm() {
         const res = await createUser(formData)
         if (res?.error) {
             setError(res.error)
+            toast.error(res.error)
         } else {
+            toast.success('User created successfully!')
             // Success - form clears automatically if not controlled, or we can reset
             // Just clearing error is enough for now, server revalidates path
             const form = document.getElementById('create-user-form') as HTMLFormElement

@@ -18,6 +18,26 @@
   /* Firefox */
 }
 
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.3);
+    /* Purple-500 with opacity */
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.5);
+  }
+}
+
 /* Force single page behavior where possible */
 .break-inside-avoid {
   break-inside: avoid;

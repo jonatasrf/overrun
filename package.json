@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3005",
+    "dev": "next dev -p 3005 --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -21,6 +21,7 @@
     "prisma": "^6.19.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-hot-toast": "^2.6.0",
     "tailwind-merge": "^3.4.0",
     "use-debounce": "^10.0.6"
   },

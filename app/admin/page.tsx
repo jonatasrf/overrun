@@ -1,9 +1,11 @@
 import { Header } from '@/components/Header'
 import { prisma } from '@/lib/prisma'
 import { deleteTractor, createTire, deleteTire } from '@/app/actions/admin'
-import { Plus, Trash2, Tractor, Settings2, Disc, User } from 'lucide-react'
+import { Plus, Trash2, Tractor, Settings2, Disc, User, History } from 'lucide-react'
+import Link from 'next/link'
 import { TractorImageForm } from '@/components/TractorImageForm'
 import { CreateUserForm } from '@/components/CreateUserForm'
+import { CreateTireForm } from '@/components/CreateTireForm'
 
 export default async function AdminPage() {
     const tractors = await prisma.tractorModel.findMany({
@@ -44,7 +46,7 @@ export default async function AdminPage() {
 
                         <TractorImageForm />
 
-                        <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                             {tractors.map((tractor) => (
                                 <div key={tractor.id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 flex justify-between items-center">
                                     <div>
@@ -54,11 +56,20 @@ export default async function AdminPage() {
                                             <span>Ratio: <span className="text-cyan-400 font-mono">{tractor.gearRatio}</span></span>
                                         </div>
                                     </div>
-                                    <form action={deleteTractor.bind(null, tractor.id)}>
-                                        <button className="text-red-400 hover:text-red-300 p-2 hover:bg-red-400/10 rounded-lg transition-colors">
-                                            <Trash2 className="h-5 w-5" />
-                                        </button>
-                                    </form>
+                                    <div className="flex items-center gap-2">
+                                        <Link
+                                            href={`/tractors/${encodeURIComponent(tractor.name)}`}
+                                            className="text-purple-400 hover:text-purple-300 p-2 hover:bg-purple-400/10 rounded-lg transition-colors"
+                                            title="View History"
+                                        >
+                                            <History className="h-5 w-5" />
+                                        </Link>
+                                        <form action={async (formData: FormData) => { 'use server'; await deleteTractor(tractor.id, formData) }}>
+                                            <button className="text-red-400 hover:text-red-300 p-2 hover:bg-red-400/10 rounded-lg transition-colors">
+                                                <Trash2 className="h-5 w-5" />
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -71,68 +82,9 @@ export default async function AdminPage() {
                             Manage Tires
                         </h2>
 
-                        <form action={createTire} className="space-y-4 mb-8 bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-                            <div>
-                                <label className="block text-xs font-medium text-gray-400 mb-1">Tire Name / Size</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="e.g. 520/85R42 (FIRESTONE)"
-                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none text-white"
-                                    required
-                                />
-                            </div>
+                        <CreateTireForm />
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-1">Rim (Aro)</label>
-                                    <input
-                                        type="text"
-                                        name="rim"
-                                        placeholder="e.g. W16L"
-                                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-purple-500 outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-1">RC (mm)</label>
-                                    <input
-                                        type="number"
-                                        name="rollingCircumference"
-                                        placeholder="Circumference"
-                                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-purple-500 outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-1">SLR (mm)</label>
-                                    <input
-                                        type="number"
-                                        name="staticLoadedRadius"
-                                        placeholder="Radius"
-                                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-purple-500 outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-gray-400 mb-1">OD (mm)</label>
-                                    <input
-                                        type="number"
-                                        name="overallDiameter"
-                                        placeholder="Diameter"
-                                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-purple-500 outline-none"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end">
-                                <button
-                                    type="submit"
-                                    className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2 font-medium"
-                                >
-                                    <Plus className="h-4 w-4" /> Add Tire
-                                </button>
-                            </div>
-                        </form>
-
-                        <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                             {tires.map((tire) => (
                                 <div key={tire.id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 flex justify-between items-start">
                                     <div>
@@ -144,7 +96,7 @@ export default async function AdminPage() {
                                             <div><span className="text-gray-500">OD:</span> {tire.overallDiameter ? `${tire.overallDiameter}mm` : '-'}</div>
                                         </div>
                                     </div>
-                                    <form action={deleteTire.bind(null, tire.id)}>
+                                    <form action={async (formData: FormData) => { 'use server'; await deleteTire(tire.id, formData) }}>
                                         <button className="text-red-400 hover:text-red-300 p-2 hover:bg-red-400/10 rounded-lg transition-colors">
                                             <Trash2 className="h-5 w-5" />
                                         </button>
@@ -167,7 +119,7 @@ export default async function AdminPage() {
 
                             <div className="bg-gray-800/30 rounded-lg p-4">
                                 <h3 className="text-sm font-bold text-gray-400 mb-4 uppercase">Administrators</h3>
-                                <div className="space-y-2 max-h-60 overflow-y-auto">
+                                <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                     {users.map(u => (
                                         <div key={u.id} className="flex justify-between items-center p-2 bg-gray-800 rounded border border-gray-700">
                                             <span className="font-medium text-white">{u.username}</span>

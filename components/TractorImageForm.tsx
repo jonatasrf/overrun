@@ -4,6 +4,7 @@ import { createTractor } from '@/app/actions/admin'
 import { Plus, Tractor, Image as ImageIcon, X } from 'lucide-react'
 import { useState, useRef, ChangeEvent } from 'react'
 import { useFormStatus } from 'react-dom'
+import { toast } from 'react-hot-toast'
 
 function SubmitButton() {
     const { pending } = useFormStatus()
@@ -19,15 +20,18 @@ function SubmitButton() {
 }
 
 export function TractorImageForm() {
+    const [error, setError] = useState<string | null>(null)
     const [preview, setPreview] = useState<string | null>(null)
     const [imageFile, setImageFile] = useState<File | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     // Resize image client-side to max 600px
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setError(null)
         const file = e.target.files?.[0]
         if (!file) return
 
+        // ... (rest of image logic remains same)
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = (event) => {
@@ -60,7 +64,7 @@ export function TractorImageForm() {
                         setImageFile(resizedFile)
                         setPreview(URL.createObjectURL(resizedFile))
                     }
-                }, 'image/jpeg', 0.9) // 90% quality JPEG for better print result
+                }, 'image/jpeg', 0.9)
             }
         }
     }
@@ -68,12 +72,14 @@ export function TractorImageForm() {
     const clearImage = () => {
         setPreview(null)
         setImageFile(null)
+        setError(null)
         if (fileInputRef.current) {
             fileInputRef.current.value = ''
         }
     }
 
     async function handleSubmit(formData: FormData) {
+        setError(null)
         // Append the resized image file to the FormData
         if (imageFile) {
             formData.set('image', imageFile)
@@ -81,12 +87,15 @@ export function TractorImageForm() {
 
         const res = await createTractor(formData)
         if (res?.success) {
+            toast.success('Tractor model added successfully!')
             // Reset form
             clearImage()
             const form = document.getElementById('tractor-form') as HTMLFormElement
             form?.reset()
         } else {
-            alert('Failed to create tractor')
+            const errorMsg = res?.error || 'Failed to create tractor'
+            setError(errorMsg)
+            toast.error(errorMsg)
         }
     }
 
@@ -99,16 +108,23 @@ export function TractorImageForm() {
                     placeholder="Model Name"
                     className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none text-white"
                     required
+                    onChange={() => setError(null)}
                 />
                 <input
                     type="number"
                     step="0.0001"
                     name="gearRatio"
-                    placeholder="Ratio (e.g. 1.5177)"
+                    placeholder="Ratio"
                     className="w-32 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none text-white"
                     required
                 />
             </div>
+
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-lg">
+                    {error}
+                </div>
+            )}
 
             <div className="flex gap-4 items-center">
                 <div className="relative">

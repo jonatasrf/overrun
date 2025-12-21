@@ -2,7 +2,7 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-const secretKey = 'secret-key' // In production, use process.env.JWT_SECRET
+const secretKey = process.env.JWT_SECRET || 'dev-secret-key-change-me'
 const key = new TextEncoder().encode(secretKey)
 
 export async function signToken(payload: any) {
