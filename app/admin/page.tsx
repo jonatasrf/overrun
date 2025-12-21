@@ -6,23 +6,12 @@ import { TractorImageForm } from '@/components/TractorImageForm'
 import { CreateUserForm } from '@/components/CreateUserForm'
 
 export default async function AdminPage() {
-    // Add a check to ensure prisma is available before attempting to access it
-    if (!prisma) {
-        // In a real application, you might want to log this error or render a fallback UI
-        console.error("Prisma client is not initialized.");
-        return (
-            <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center">
-                <p className="text-red-500 text-lg">Error: Database connection not available.</p>
-            </div>
-        );
-    }
-
     const tractors = await prisma.tractorModel.findMany({
         orderBy: { name: 'asc' },
         select: {
             id: true,
             name: true,
-            gearRatio: true
+            gearRatio: true,
             // Exclude image to avoid serialization issues and performance cost
         }
     })
