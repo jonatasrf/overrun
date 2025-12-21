@@ -76,9 +76,9 @@ export function OverrunMatrix({ measurements, gearRatio }: Props) {
                                     const colorClass = getStatusColor(percentVal)
 
                                     return (
-                                        <td key={rearPsi} className="p-1 print:p-[1px]">
+                                        <td key={rearPsi} className="p-1 print:p-px">
                                             <div className={clsx(
-                                                "h-16 flex flex-col items-center justify-center rounded-lg border transition-transform hover:scale-105 cursor-default print:h-10 print:w-full print:border-[1px] print:rounded-md",
+                                                "h-16 flex flex-col items-center justify-center rounded-lg border transition-transform hover:scale-105 cursor-default print:h-10 print:w-full print:border print:rounded-md",
                                                 colorClass
                                             )}>
                                                 <span className="text-lg font-bold print:text-[11px] print:leading-none">

@@ -147,7 +147,7 @@ export default async function AdminPage() {
                             {tires.map((tire) => (
                                 <div key={tire.id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 flex justify-between items-start">
                                     <div>
-                                        <h3 className="font-bold text-lg text-white text-purple-200">{tire.name}</h3>
+                                        <h3 className="font-bold text-lg text-purple-200">{tire.name}</h3>
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 mt-2 text-xs text-gray-400">
                                             <div><span className="text-gray-500">Rim:</span> {tire.rim || '-'}</div>
                                             <div><span className="text-gray-500">RC:</span> {tire.rollingCircumference ? `${tire.rollingCircumference}mm` : '-'}</div>
