@@ -36,7 +36,14 @@ export default async function ReportsPage(props: {
     const reports = await prisma.report.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        include: {
+        select: {
+            id: true,
+            createdAt: true,
+            status: true,
+            tractorName: true,
+            gearRatioValue: true,
+            tireBrandFront: true,
+            tireBrandRear: true,
             user: true
         }
     })

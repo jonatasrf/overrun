@@ -7,7 +7,12 @@ export const dynamic = 'force-dynamic'
 
 export default async function NewReportPage() {
     const tractors = await prisma.tractorModel.findMany({
-        orderBy: { name: 'asc' }
+        orderBy: { name: 'asc' },
+        select: {
+            id: true,
+            name: true,
+            gearRatio: true
+        }
     })
 
     const tires = await prisma.tire.findMany({

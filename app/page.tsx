@@ -7,7 +7,12 @@ import { FileText, Calendar, User as UserIcon } from 'lucide-react'
 export default async function Dashboard() {
   const reports = await prisma.report.findMany({
     orderBy: { createdAt: 'desc' },
-    include: {
+    select: {
+      id: true,
+      createdAt: true,
+      status: true,
+      tractorName: true,
+      gearRatioValue: true,
       user: {
         select: { username: true }
       }

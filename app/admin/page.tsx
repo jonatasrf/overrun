@@ -18,7 +18,13 @@ export default async function AdminPage() {
     }
 
     const tractors = await prisma.tractorModel.findMany({
-        orderBy: { name: 'asc' }
+        orderBy: { name: 'asc' },
+        select: {
+            id: true,
+            name: true,
+            gearRatio: true
+            // Exclude image to avoid serialization issues and performance cost
+        }
     })
 
     const tires = await prisma.tire.findMany({
