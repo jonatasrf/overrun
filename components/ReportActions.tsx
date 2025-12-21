@@ -29,22 +29,22 @@ export function ReportActions({ reportId, status, isAdmin }: Props) {
     }
 
     return (
-        <div className="flex gap-2 print:hidden">
+        <div className="flex flex-wrap gap-2 print:hidden w-full sm:w-auto">
             {status === 'OPEN' && isAdmin && (
-                <form action={handleClose}>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg shadow-md transition-colors font-medium">
-                        <Lock className="h-4 w-4" /> Close Report
+                <form action={handleClose} className="flex-1 sm:flex-none">
+                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg shadow-md transition-colors font-medium whitespace-nowrap">
+                        <Lock className="h-4 w-4" /> Close
                     </button>
                 </form>
             )}
 
-            <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md transition-colors font-medium">
-                <FileDown className="h-4 w-4" /> Print / PDF
+            <button onClick={handlePrint} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md transition-colors font-medium whitespace-nowrap">
+                <FileDown className="h-4 w-4" /> Print
             </button>
 
             {isAdmin && (
-                <form onSubmit={handleDelete}>
-                    <button type="submit" className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md transition-colors font-medium">
+                <form onSubmit={handleDelete} className="flex-1 sm:flex-none">
+                    <button type="submit" className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md transition-colors font-medium whitespace-nowrap">
                         <Trash2 className="h-4 w-4" /> Delete
                     </button>
                 </form>

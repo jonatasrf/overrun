@@ -135,28 +135,28 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                     </div>
                 </div>
 
-                <div className="flex gap-4 items-center print:hidden">
+                <div className="flex flex-wrap gap-2 sm:gap-4 items-center print:hidden w-full sm:w-auto mt-4 sm:mt-0">
                     {!isEditing && canEdit && (
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-600/30 transition-colors"
+                            className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-600/30 transition-colors w-full sm:w-auto"
                         >
                             <Edit2 className="h-4 w-4" /> Edit
                         </button>
                     )}
 
                     {isEditing && (
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
                             >
                                 <X className="h-4 w-4" /> Cancel
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={loading}
-                                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 disabled:opacity-50"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500 disabled:opacity-50"
                             >
                                 <Save className="h-4 w-4" /> Save
                             </button>
