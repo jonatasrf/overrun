@@ -35,7 +35,7 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-            <div className="w-full max-w-md p-8 bg-gray-800 rounded-xl shadow-2xl border border-gray-700">
+            <div className="w-full max-w-md p-6 sm:p-8 bg-gray-800 rounded-xl shadow-2xl border border-gray-700">
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-teal-400 mb-2">
                         {isLogin ? 'Welcome Back' : 'Create Account'}
