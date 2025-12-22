@@ -37,13 +37,15 @@ export async function Header() {
                             </Link>
                         )}
 
-                        <Link
-                            href="/reports/new"
-                            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 rounded-md transition-colors shadow-lg shadow-blue-500/20 whitespace-nowrap"
-                        >
-                            <PlusCircle className="h-4 w-4" />
-                            New Test
-                        </Link>
+                        {session?.role === 'ADMIN' && (
+                            <Link
+                                href="/reports/new"
+                                className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 rounded-md transition-colors shadow-lg shadow-blue-500/20 whitespace-nowrap"
+                            >
+                                <PlusCircle className="h-4 w-4" />
+                                New Test
+                            </Link>
+                        )}
 
                         <div className="h-6 w-px bg-gray-700 hidden sm:block" />
 

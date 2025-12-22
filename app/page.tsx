@@ -5,6 +5,7 @@ import { FileText } from 'lucide-react'
 import { DashboardSearch } from '@/components/DashboardSearch'
 import { DashboardReportCard } from '@/components/DashboardReportCard'
 import { Suspense } from 'react'
+import { getSession } from '@/lib/auth'
 
 export default async function Dashboard({
   searchParams,
@@ -12,6 +13,7 @@ export default async function Dashboard({
   searchParams: Promise<{ q?: string }>
 }) {
   const query = (await searchParams).q
+  const session = await getSession()
 
   const reports = await prisma.report.findMany({
     where: query ? {
@@ -51,15 +53,21 @@ export default async function Dashboard({
           <div className="text-center py-20 bg-gray-900/30 rounded-2xl border border-gray-800 border-dashed">
             <FileText className="mx-auto h-12 w-12 text-gray-600 mb-4" />
             <h3 className="text-lg font-medium text-gray-300">No tests found</h3>
-            <p className="mt-1 text-gray-500">Get started by creating a new overrun test.</p>
-            <div className="mt-6">
-              <Link
-                href="/reports/new"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ring-offset-gray-900"
-              >
-                Create Test
-              </Link>
-            </div>
+            {session?.role === 'ADMIN' ? (
+              <>
+                <p className="mt-1 text-gray-500">Get started by creating a new overrun test.</p>
+                <div className="mt-6">
+                  <Link
+                    href="/reports/new"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ring-offset-gray-900"
+                  >
+                    Create Test
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <p className="mt-1 text-gray-500">There are no tests recorded yet.</p>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

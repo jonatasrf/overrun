@@ -17,7 +17,7 @@ export async function createReport(data: {
     tireBrandRear?: string
 }) {
     const session = await getSession()
-    if (!session) return { error: 'Unauthorized' }
+    if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized: Only admins can create tests' }
 
     const {
         tractorName,
@@ -37,7 +37,8 @@ export async function createReport(data: {
     }
 
     // Verify user exists (handle dev environment resets)
-    const user = await prisma.user.findUnique({ where: { id: session.userId } })
+    const userId = session.userId as string
+    const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) {
         return { error: 'Session expired. Please logout and login again.' }
     }
@@ -49,7 +50,7 @@ export async function createReport(data: {
     try {
         const report = await prisma.report.create({
             data: {
-                userId: session.userId,
+                userId: userId,
                 tractorName,
                 gearRatioValue: Number(gearRatioValue),
                 tractorImage: tractor?.image, // Save snapshot of image

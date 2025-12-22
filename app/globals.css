@@ -43,11 +43,27 @@
   break-inside: avoid;
 }
 
-/* Explicit Print Grid for Measurements */
-.print-grid-2 {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 1rem !important;
+@media print {
+
+  /* Explicit Print Grid for Measurements */
+  .print-grid-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Force background colors to show in print (for matrix) */
+  .print-color-adjust {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 
 body {

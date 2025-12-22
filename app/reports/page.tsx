@@ -55,7 +55,7 @@ export default async function ReportsPage(props: {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-teal-400">
-                        Test History
+                        Tests
                     </h1>
 
                     {session?.role === 'ADMIN' && (

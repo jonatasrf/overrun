@@ -47,7 +47,7 @@ export default async function TractorHistoryPage({
                             <h1 className="text-3xl font-bold text-white">
                                 {tractorName}
                             </h1>
-                            <p className="text-gray-500">History of overrun tests</p>
+                            <p className="text-gray-500">Overrun Tests</p>
                         </div>
                     </div>
                 </div>
@@ -61,8 +61,8 @@ export default async function TractorHistoryPage({
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${report.status === 'CLOSED'
-                                        ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                        : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                    : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
                                     }`}>
                                     {report.status}
                                 </span>
