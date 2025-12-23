@@ -1,5 +1,6 @@
 import { Header } from '@/components/Header'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/auth'
 import { deleteTractor, createTire, deleteTire } from '@/app/actions/admin'
 import { Plus, Trash2, Tractor, Settings2, Disc, User, History } from 'lucide-react'
 import Link from 'next/link'
@@ -8,6 +9,7 @@ import { CreateUserForm } from '@/components/CreateUserForm'
 import { CreateTireForm } from '@/components/CreateTireForm'
 
 export default async function AdminPage() {
+    const session = await getSession()
     const tractors = await prisma.tractorModel.findMany({
         orderBy: { name: 'asc' },
         select: {
@@ -29,7 +31,7 @@ export default async function AdminPage() {
 
     return (
         <div className="min-h-screen bg-gray-950 text-gray-100">
-            <Header />
+            <Header session={session} />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-purple-400 to-pink-400 mb-8">

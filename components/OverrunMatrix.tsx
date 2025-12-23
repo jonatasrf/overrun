@@ -112,7 +112,7 @@ export function OverrunMatrix({ measurements, gearRatio }: Props) {
                                                     }
                                                 }}
                                                 className={clsx(
-                                                    "h-16 flex flex-col items-center justify-center rounded-lg border transition-all duration-200 cursor-pointer overflow-hidden relative print:h-10 print:w-full print:border print:rounded-md",
+                                                    "h-16 flex flex-col items-center justify-center rounded-lg border transition-all duration-200 cursor-pointer overflow-hidden relative print:h-10 print:w-full print:border print:rounded-md matrix-cell",
                                                     colorClass,
                                                     isSelected
                                                         ? "scale-105 z-10 border-white ring-2 ring-white/50 shadow-lg shadow-white/10"

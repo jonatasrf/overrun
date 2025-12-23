@@ -67,9 +67,9 @@ export default async function ReportPage(props: Props) {
     const serializedCurrentUser = JSON.parse(JSON.stringify(session))
 
     return (
-        <div className="min-h-screen bg-gray-950 text-gray-100">
+        <div className="min-h-screen bg-gray-950 text-gray-100 print:bg-white print:text-black">
             <div className="print:hidden">
-                <Header />
+                <Header session={session} />
             </div>
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <ReportDetailClient

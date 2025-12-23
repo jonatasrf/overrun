@@ -44,6 +44,9 @@
 }
 
 @media print {
+  :root {
+    color-scheme: light !important;
+  }
 
   /* Explicit Print Grid for Measurements */
   .print-grid-2 {
@@ -52,17 +55,98 @@
     gap: 1rem !important;
   }
 
-  body {
-    background: white !important;
+  body,
+  .min-h-screen,
+  main,
+  header,
+  div[class*="bg-gray-"],
+  div[class*="bg-slate-"],
+  div[class*="bg-neutral-"],
+  div[class*="bg-black"],
+  div[class*="bg-blue-"],
+  div[class*="bg-teal-"] {
+    background-color: white !important;
+    background-image: none !important;
     color: black !important;
+    border-color: #d1d5db !important;
+    /* gray-300 */
+    box-shadow: none !important;
+  }
+
+  /* Force background colors to show in print (for matrix) */
+  .print-color-adjust,
+  [class*="bg-green-"],
+  [class*="bg-yellow-"],
+  [class*="bg-red-"] {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Force background colors to show in print (for matrix) */
-  .print-color-adjust {
+  /* Specific overrides for text visibility */
+  p,
+  span,
+  h1,
+  h2,
+  h3,
+  th,
+  td:not(.matrix-cell) {
+    color: black !important;
+  }
+
+  /* Matrix Cell Contrast Adjustments for Print */
+  .matrix-cell {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  .bg-green-500\/20 {
+    background-color: #d1fae5 !important;
+    /* green-100 */
+    border-color: #10b981 !important;
+    /* green-500 */
+  }
+
+  .bg-green-500\/20 * {
+    color: #065f46 !important;
+    /* green-800 */
+  }
+
+  .bg-yellow-500\/20 {
+    background-color: #fef3c7 !important;
+    /* yellow-100 */
+    border-color: #f59e0b !important;
+    /* yellow-500 */
+  }
+
+  .bg-yellow-500\/20 * {
+    color: #92400e !important;
+    /* yellow-800 */
+  }
+
+  .bg-red-500\/20 {
+    background-color: #fee2e2 !important;
+    /* red-100 */
+    border-color: #ef4444 !important;
+    /* red-500 */
+  }
+
+  .bg-red-500\/20 * {
+    color: #991b1b !important;
+    /* red-800 */
+  }
+
+  .text-teal-400 {
+    color: #0f766e !important;
+    /* teal-700 */
+  }
+
+  .text-blue-400 {
+    color: #1d4ed8 !important;
+    /* blue-700 */
+  }
+
+  @page {
+    margin: 1cm;
   }
 }
 
@@ -70,4 +154,114 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Outdoor Mode (High Contrast Light Theme) */
+.outdoor-mode {
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+}
+
+.outdoor-mode body {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Container & Background Overrides */
+.outdoor-mode .bg-gray-900,
+.outdoor-mode .bg-gray-950,
+.outdoor-mode .bg-gray-800,
+.outdoor-mode .bg-gray-800\/50,
+.outdoor-mode .bg-gray-800\/30,
+.outdoor-mode .bg-slate-900,
+.outdoor-mode .bg-neutral-900 {
+  background-color: #f9fafb !important;
+  /* gray-50 */
+  color: #000000 !important;
+  border-color: #d1d5db !important;
+  /* gray-300 */
+}
+
+/* Form Elements: Inputs & Selects */
+.outdoor-mode input,
+.outdoor-mode select,
+.outdoor-mode textarea,
+.outdoor-mode .bg-gray-800,
+.outdoor-mode .bg-gray-900 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #9ca3af !important;
+  /* gray-400 */
+}
+
+/* Placeholder visibility */
+.outdoor-mode input::placeholder,
+.outdoor-mode select::placeholder {
+  color: #6b7280 !important;
+  /* gray-500 */
+}
+
+/* Text color refinements */
+.outdoor-mode .text-gray-400,
+.outdoor-mode .text-gray-500,
+.outdoor-mode .text-slate-400,
+.outdoor-mode .text-neutral-500 {
+  color: #374151 !important;
+  /* gray-700 */
+}
+
+.outdoor-mode .text-white,
+.outdoor-mode .text-gray-100,
+.outdoor-mode .text-blue-100,
+.outdoor-mode .text-teal-100,
+.outdoor-mode .text-purple-200,
+.outdoor-mode .text-cyan-400,
+.outdoor-mode .text-blue-400,
+.outdoor-mode .text-teal-400 {
+  color: #000000 !important;
+}
+
+/* Borders */
+.outdoor-mode .border-gray-800,
+.outdoor-mode .border-gray-700,
+.outdoor-mode .border-slate-800 {
+  border-color: #9ca3af !important;
+  /* gray-400 */
+}
+
+/* Specific UI enhancements for visibility */
+.outdoor-mode .bg-linear-to-r {
+  background-image: none !important;
+  background-color: #f3f4f6 !important;
+  /* gray-100 */
+  border-bottom: 2px solid #000;
+}
+
+.outdoor-mode .hover\:bg-gray-700:hover,
+.outdoor-mode .hover\:bg-gray-800\/50:hover {
+  background-color: #e5e7eb !important;
+  /* gray-200 */
+}
+
+/* Ensure icons are visible */
+.outdoor-mode .lucide {
+  stroke: #1f2937 !important;
+  /* gray-800 */
+}
+
+/* Matrix cell text in outdoor mode */
+.outdoor-mode .matrix-cell span,
+.outdoor-mode .matrix-cell b {
+  color: #000000 !important;
+}
+
+/* Fix for gradient titles in Outdoor Mode */
+.outdoor-mode h1.bg-clip-text,
+.outdoor-mode h2.bg-clip-text,
+.outdoor-mode .bg-clip-text {
+  background-image: none !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-clip: unset !important;
 }

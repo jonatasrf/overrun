@@ -1,8 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import { Header } from '@/components/Header'
 import Link from 'next/link'
-import { Calendar, User as UserIcon, ArrowLeft, Tractor } from 'lucide-react'
+import { Calendar, User as UserIcon, ArrowLeft } from 'lucide-react'
+import { TractorHistoryHeader } from '@/components/TractorHistoryHeader'
 import { notFound } from 'next/navigation'
+
+import { getSession } from '@/lib/auth'
 
 export default async function TractorHistoryPage({
     params
@@ -11,6 +14,7 @@ export default async function TractorHistoryPage({
 }) {
     const rawName = (await params).name
     const tractorName = decodeURIComponent(rawName)
+    const session = await getSession()
 
     const reports = await prisma.report.findMany({
         where: { tractorName: { equals: tractorName, mode: 'insensitive' } },
@@ -28,7 +32,7 @@ export default async function TractorHistoryPage({
 
     return (
         <div className="min-h-screen bg-gray-950 text-gray-100">
-            <Header />
+            <Header session={session} />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-8">
@@ -40,15 +44,7 @@ export default async function TractorHistoryPage({
                     </Link>
 
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-600/20 rounded-xl border border-purple-500/20">
-                            <Tractor className="h-8 w-8 text-purple-400" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold text-white">
-                                {tractorName}
-                            </h1>
-                            <p className="text-gray-500">Overrun Tests</p>
-                        </div>
+                        <TractorHistoryHeader tractorName={tractorName} reports={reports} />
                     </div>
                 </div>
 

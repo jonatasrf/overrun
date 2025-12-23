@@ -1,21 +1,20 @@
+'use client'
 
 import Link from 'next/link'
 import { LogoutButton } from './LogoutButton'
-import { getSession } from '@/lib/auth'
 import { PlusCircle, Settings, ClipboardList } from 'lucide-react'
+import { ThemeToggle } from './ThemeToggle'
 
-export async function Header() {
-    const session = await getSession()
-
+export function Header({ session }: { session: any }) {
     return (
-        <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-xl sticky top-0 z-50">
+        <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-xl sticky top-0 z-50 transition-colors">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-4 sm:py-0 gap-4 sm:gap-0">
-                    <div className="flex items-center w-full sm:w-auto justify-between sm:justify-start">
+                    <div className="flex items-center w-full sm:w-auto justify-between sm:justify-start gap-4">
                         <Link href="/" className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-teal-400">
                             OVERRUN
                         </Link>
-                        {/* Mobile Spacer if needed */}
+                        <ThemeToggle />
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-hide">

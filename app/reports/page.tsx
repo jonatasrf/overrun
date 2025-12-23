@@ -50,7 +50,7 @@ export default async function ReportsPage(props: {
 
     return (
         <div className="min-h-screen bg-gray-950 text-gray-100">
-            <Header />
+            <Header session={session} />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex justify-between items-center mb-6">

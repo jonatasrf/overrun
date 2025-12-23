@@ -19,7 +19,7 @@ export function ReportActions({ reportId, status, isAdmin }: Props) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const handlePrint = () => {
+    const handleGeneratePDF = () => {
         window.print()
     }
 
@@ -128,8 +128,8 @@ export function ReportActions({ reportId, status, isAdmin }: Props) {
                 </div>
             )}
 
-            <button onClick={handlePrint} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md transition-colors font-medium whitespace-nowrap">
-                <FileDown className="h-4 w-4" /> Print
+            <button onClick={handleGeneratePDF} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 sm:px-4 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md transition-colors font-medium whitespace-nowrap">
+                <FileDown className="h-4 w-4" /> Generate PDF
             </button>
 
             {isAdmin && (

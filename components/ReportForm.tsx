@@ -5,6 +5,7 @@ import { createReport } from '@/app/actions/reports'
 import { useRouter } from 'next/navigation'
 import { Save, Loader2, Info, Scale, Settings } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { MeasurementTable } from './MeasurementTable'
 
 type Props = {
     tractors: any[]
@@ -264,87 +265,20 @@ export function ReportForm({ tractors, tires = [] }: Props) {
 
             {/* Measurements Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Front Tires */}
-                <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-                    <div className="bg-linear-to-r from-blue-900/50 to-blue-800/50 px-6 py-4 border-b border-gray-800">
-                        <h3 className="text-lg font-bold text-blue-100">Front Tires Measurements</h3>
-                    </div>
-                    <div className="p-4 overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="hidden sm:table-row text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <th className="px-3 py-2">PSI</th>
-                                    <th className="px-3 py-2">Test 1</th>
-                                    <th className="px-3 py-2">Test 2</th>
-                                    <th className="px-3 py-2">Test 3</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-800">
-                                {PRESSURES.map(pressure => (
-                                    <tr key={`front-${pressure}`} className="flex flex-col sm:table-row border-b border-gray-800 sm:border-0 py-2 sm:py-0">
-                                        <td className="px-3 py-2 font-mono text-blue-400 font-bold sm:table-cell">
-                                            <span className="sm:hidden text-[10px] text-gray-500 block uppercase mb-1">Pressure</span>
-                                            {pressure} PSI
-                                        </td>
-                                        {(['val1', 'val2', 'val3'] as const).map((field, idx) => (
-                                            <td key={field} className="px-3 py-1 sm:px-1 sm:py-1 sm:table-cell">
-                                                <span className="sm:hidden text-[10px] text-gray-500 block uppercase mb-1">Test {idx + 1}</span>
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-center text-white focus:ring-1 focus:ring-blue-500 outline-none"
-                                                    value={measurements[`FRONT_${pressure}`][field]}
-                                                    onChange={(e) => handleMeasurementChange('FRONT', pressure, field, e.target.value)}
-                                                />
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Rear Tires */}
-                <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-                    <div className="bg-linear-to-r from-teal-900/50 to-teal-800/50 px-6 py-4 border-b border-gray-800">
-                        <h3 className="text-lg font-bold text-teal-100">Rear Tires Measurements</h3>
-                    </div>
-                    <div className="p-4 overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="hidden sm:table-row text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <th className="px-3 py-2">PSI</th>
-                                    <th className="px-3 py-2">Test 1</th>
-                                    <th className="px-3 py-2">Test 2</th>
-                                    <th className="px-3 py-2">Test 3</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-800">
-                                {PRESSURES.map(pressure => (
-                                    <tr key={`rear-${pressure}`} className="flex flex-col sm:table-row border-b border-gray-800 sm:border-0 py-2 sm:py-0">
-                                        <td className="px-3 py-2 font-mono text-teal-400 font-bold sm:table-cell">
-                                            <span className="sm:hidden text-[10px] text-gray-500 block uppercase mb-1">Pressure</span>
-                                            {pressure} PSI
-                                        </td>
-                                        {(['val1', 'val2', 'val3'] as const).map((field, idx) => (
-                                            <td key={field} className="px-3 py-1 sm:px-1 sm:py-1 sm:table-cell">
-                                                <span className="sm:hidden text-[10px] text-gray-500 block uppercase mb-1">Test {idx + 1}</span>
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-center text-white focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={measurements[`REAR_${pressure}`][field]}
-                                                    onChange={(e) => handleMeasurementChange('REAR', pressure, field, e.target.value)}
-                                                />
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <MeasurementTable
+                    type="FRONT"
+                    measurements={measurements}
+                    pressures={PRESSURES}
+                    isEditing={true}
+                    onChange={handleMeasurementChange}
+                />
+                <MeasurementTable
+                    type="REAR"
+                    measurements={measurements}
+                    pressures={PRESSURES}
+                    isEditing={true}
+                    onChange={handleMeasurementChange}
+                />
             </div>
 
             <div className="flex justify-end pt-4">

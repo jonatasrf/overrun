@@ -5,7 +5,8 @@ import { OverrunMatrix } from '@/components/OverrunMatrix'
 import { ReportActions } from '@/components/ReportActions'
 import { updateReport } from '@/app/actions/reports'
 import { useRouter } from 'next/navigation'
-import { FileText, Calendar, User, Tractor, Settings, Scale, Edit2, Save, X, Disc, History } from 'lucide-react'
+import { Trash2, Lock, Unlock, Printer, FileDown, Calendar, UserIcon, Tractor, Ruler, Gauge, Scale, Settings, Check, X, Loader2, Edit2, Save, Disc, History } from 'lucide-react'
+import { MeasurementTable } from './MeasurementTable'
 import Link from 'next/link'
 
 const PRESSURES = [24, 22, 20, 18, 16, 14]
@@ -120,10 +121,10 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
     return (
         <div className="space-y-8 print:space-y-4">
             {/* Header / Actions */}
-            <div className="bg-gray-900 rounded-xl p-4 sm:p-6 border border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:p-0 print:border-none print:mb-2">
+            <div className="bg-gray-900 rounded-xl p-4 sm:p-6 border border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:p-0 print:border-none print:mb-2 print:bg-white print:text-black">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <h1 className="text-3xl font-bold text-white">
+                        <h1 className="text-3xl font-bold text-white print:text-black">
                             {isEditing ? 'Editing Test' : 'Test Report'}
                         </h1>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold border ${report.status === 'CLOSED' ? 'bg-green-900/30 text-green-400 border-green-500/30' : 'bg-yellow-900/30 text-yellow-400 border-yellow-500/30'}`}>
@@ -132,7 +133,7 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-gray-400">
                         <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> {new Date(report.createdAt).toLocaleDateString()}</span>
-                        <span className="flex items-center gap-1"><User className="h-4 w-4" /> {report.user.username}</span>
+                        <span className="flex items-center gap-1"><UserIcon className="h-4 w-4" /> {report.user.username}</span>
                     </div>
                 </div>
 
@@ -172,8 +173,8 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
 
             {/* Tractor Data */}
             {/* Tractor Data */}
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 print:border-none print:shadow-none print:p-0 print:mb-2">
-                <h3 className="text-lg font-bold text-gray-100 mb-6 flex items-center gap-2 print:text-black print:mb-2 print:border-b-2 print:border-black print:pb-1">
+            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 print:border-none print:shadow-none print:p-0 print:mb-2 print:bg-white print:text-black">
+                <h3 className="text-lg font-bold text-gray-100 mb-6 flex items-center gap-2 print:text-black print:mb-0 print:border-b-2 print:border-black print:pb-1">
                     <Tractor className="h-5 w-5 text-purple-400 print:hidden" />
                     Tractor Configuration
                 </h3>
@@ -434,107 +435,28 @@ export function ReportDetailClient({ report, tractors, tires, currentUser }: Pro
                 </div>
             </div>
 
+            {/* Measurements Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 print-grid-2">
+                <MeasurementTable
+                    type="FRONT"
+                    measurements={measurements}
+                    pressures={PRESSURES}
+                    isEditing={isEditing}
+                    onChange={handleMeasurementChange}
+                />
+                <MeasurementTable
+                    type="REAR"
+                    measurements={measurements}
+                    pressures={PRESSURES}
+                    isEditing={isEditing}
+                    onChange={handleMeasurementChange}
+                />
+            </div>
+
             {/* Matrix Section */}
             <div className="print:w-full print:mb-8">
                 <OverrunMatrix measurements={displayedMeasurements} gearRatio={displayedGearRatio} />
             </div>
-
-            {/* Details & Edit Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 print-grid-2 print:mt-1 print:text-[10px]">
-                {/* Front */}
-                <div className={`bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-6 ${isEditing ? 'ring-2 ring-blue-500/20' : ''} print:border-none print:p-0 print:bg-white`}>
-                    <h3 className="text-lg font-bold text-blue-400 mb-2 print:text-sm print:mb-2 print:text-black print:border-b-2 print:border-black print:pb-1">Front Measurements</h3>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left text-gray-400 print:text-[10px] print:border print:border-gray-300">
-                            <thead className="text-xs uppercase bg-gray-800 text-gray-300 print:bg-gray-200 print:text-black font-bold">
-                                <tr>
-                                    <th className="px-4 py-2 print:px-1 print:py-0">PSI</th>
-                                    <th className="px-4 py-2 print:px-1 print:py-0">Values {isEditing && <span className="text-[10px] text-gray-500 normal-case">(Test 1, 2, 3)</span>}</th>
-                                    {!isEditing && <th className="px-4 py-2 print:px-1 print:py-0">Avg</th>}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-800 print:divide-gray-300">
-                                {PRESSURES.map(pressure => {
-                                    const m = displayedMeasurements.find((x: any) => x.type === 'FRONT' && x.pressure === pressure)
-                                    return (
-                                        <tr key={pressure} className="print:border-b print:border-gray-200">
-                                            <td className="px-4 py-2 font-mono text-blue-300 print:text-black print:px-2 print:py-1 print:font-bold print:bg-gray-50">{pressure}</td>
-                                            <td className="px-4 py-2 print:px-2 print:py-1 print:border-l print:border-r print:border-gray-200">
-                                                {isEditing ? (
-                                                    <div className="flex flex-col sm:flex-row gap-2">
-                                                        {['val1', 'val2', 'val3'].map((field, idx) => (
-                                                            <div key={field} className="flex items-center gap-2">
-                                                                <span className="sm:hidden text-[10px] text-gray-500 w-8">T{idx + 1}</span>
-                                                                <input
-                                                                    className="w-full sm:w-16 bg-gray-800 border border-gray-700 rounded px-1 text-white text-center"
-                                                                    value={measurements[`FRONT_${pressure}`][field as any]}
-                                                                    onChange={e => handleMeasurementChange('FRONT', pressure, field as any, e.target.value)}
-                                                                />
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-xs text-gray-500 print:text-black">
-                                                        {m?.val1}, {m?.val2}, {m?.val3}
-                                                    </span>
-                                                )}
-                                            </td>
-                                            {!isEditing && <td className="px-4 py-2 font-bold text-white print:text-black print:px-1 print:py-0">{m?.average?.toFixed(2)}</td>}
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Rear */}
-                <div className={`bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-6 ${isEditing ? 'ring-2 ring-teal-500/20' : ''} print:border-none print:p-0 print:bg-white`}>
-                    <h3 className="text-lg font-bold text-teal-400 mb-2 print:text-sm print:mb-2 print:text-black print:border-b-2 print:border-black print:pb-1">Rear Measurements</h3>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left text-gray-400 print:text-[10px] print:border print:border-gray-300">
-                            <thead className="text-xs uppercase bg-gray-800 text-gray-300 print:bg-gray-200 print:text-black font-bold">
-                                <tr>
-                                    <th className="px-4 py-2 print:px-1 print:py-0">PSI</th>
-                                    <th className="px-4 py-2 print:px-1 print:py-0">Values {isEditing && <span className="text-[10px] text-gray-500 normal-case">(Test 1, 2, 3)</span>}</th>
-                                    {!isEditing && <th className="px-4 py-2 print:px-1 print:py-0">Avg</th>}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-800 print:divide-gray-300">
-                                {PRESSURES.map(pressure => {
-                                    const m = displayedMeasurements.find((x: any) => x.type === 'REAR' && x.pressure === pressure)
-                                    return (
-                                        <tr key={pressure} className="print:border-b print:border-gray-200">
-                                            <td className="px-4 py-2 font-mono text-teal-300 print:text-black print:px-2 print:py-1 print:font-bold print:bg-gray-50">{pressure}</td>
-                                            <td className="px-4 py-2 print:px-2 print:py-1 print:border-l print:border-r print:border-gray-200">
-                                                {isEditing ? (
-                                                    <div className="flex flex-col sm:flex-row gap-2">
-                                                        {['val1', 'val2', 'val3'].map((field, idx) => (
-                                                            <div key={field} className="flex items-center gap-2">
-                                                                <span className="sm:hidden text-[10px] text-gray-500 w-8">T{idx + 1}</span>
-                                                                <input
-                                                                    className="w-full sm:w-16 bg-gray-800 border border-gray-700 rounded px-1 text-white text-center"
-                                                                    value={measurements[`REAR_${pressure}`][field as any]}
-                                                                    onChange={e => handleMeasurementChange('REAR', pressure, field as any, e.target.value)}
-                                                                />
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-xs text-gray-500 print:text-black">
-                                                        {m?.val1}, {m?.val2}, {m?.val3}
-                                                    </span>
-                                                )}
-                                            </td>
-                                            {!isEditing && <td className="px-4 py-2 font-bold text-white print:text-black print:px-1 print:py-0">{m?.average?.toFixed(2)}</td>}
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div >
+        </div>
     )
 }
