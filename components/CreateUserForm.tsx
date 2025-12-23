@@ -1,7 +1,7 @@
 'use client'
 
 import { createUser } from '@/app/actions/admin'
-import { Plus } from 'lucide-react'
+import { Plus, Eye, EyeOff } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -21,6 +21,7 @@ function SubmitButton() {
 
 export function CreateUserForm() {
     const [error, setError] = useState<string | null>(null)
+    const [showPassword, setShowPassword] = useState(false)
 
     async function clientAction(formData: FormData) {
         setError(null)
@@ -58,14 +59,22 @@ export function CreateUserForm() {
                     required
                 />
             </div>
-            <div>
+            <div className="relative">
                 <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Password"
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-white"
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all"
                     required
+                    minLength={6}
                 />
+                <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
             </div>
             <div>
                 <select

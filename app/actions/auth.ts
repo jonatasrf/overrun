@@ -59,6 +59,10 @@ export async function register(formData: FormData) {
         return { error: 'Missing fields' }
     }
 
+    if (password.length < 6) {
+        return { error: 'Password must be at least 6 characters long' }
+    }
+
     try {
         const existingUser = await prisma.user.findFirst({
             where: {

@@ -66,6 +66,10 @@ export async function createUser(formData: FormData) {
         return { error: 'All fields are required' }
     }
 
+    if (password.length < 6) {
+        return { error: 'Password must be at least 6 characters long' }
+    }
+
     // Check if user already exists
     const existing = await prisma.user.findFirst({
         where: {

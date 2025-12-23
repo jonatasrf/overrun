@@ -2,25 +2,38 @@
 
 import { useState } from 'react'
 import { login, register } from '@/app/actions/auth'
-import { Lock, User, UserPlus } from 'lucide-react'
+import { Lock, User, UserPlus, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
     const [isLogin, setIsLogin] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
-    async function handleSubmit(formData: FormData) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
         setLoading(true)
         setError(null)
+
+        const formData = new FormData()
+        formData.append('email', email)
+        formData.append('password', password)
+        if (!isLogin) {
+            formData.append('username', (e.currentTarget.elements.namedItem('username') as HTMLInputElement).value)
+            formData.append('confirmPassword', confirmPassword)
+        }
 
         const action = isLogin ? login : register
 
         if (!isLogin) {
-            const password = formData.get('password') as string
-            const confirm = formData.get('confirmPassword') as string
-            if (password !== confirm) {
+            if (password !== confirmPassword) {
                 setError("Passwords don't match")
                 setLoading(false)
+                setPassword('')
+                setConfirmPassword('')
                 return
             }
         }
@@ -29,8 +42,9 @@ export default function LoginPage() {
         if (res?.error) {
             setError(res.error)
             setLoading(false)
+            setPassword('') // Clear only password
+            setConfirmPassword('')
         }
-        // Redirect happens in action
     }
 
     return (
@@ -45,12 +59,14 @@ export default function LoginPage() {
                     </p>
                 </div>
 
-                <form action={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
                         <input
                             type="email"
                             name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="Email Address"
                             className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600"
                             required
@@ -73,26 +89,44 @@ export default function LoginPage() {
                     <div className="relative">
                         <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Password"
-                            className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600"
+                            className="w-full pl-10 pr-12 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600"
                             required
                             minLength={6}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                        >
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
                     </div>
 
                     {!isLogin && (
                         <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 placeholder="Confirm Password"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600"
+                                className="w-full pl-10 pr-12 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600"
                                 required
                                 minLength={6}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                            >
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            </button>
                         </div>
                     )}
 
